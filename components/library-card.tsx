@@ -1,22 +1,13 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { categoriesData } from "@/lib/mock-data"
+import type { Library } from "@/lib/types"
 
 interface LibraryCardProps {
-  library: {
-    id: string
-    name: string
-    slug: string
-    description: string
-    categoryId: string
-    lastUpdated?: Date
-  }
+  library: Library
 }
 
 export default function LibraryCard({ library }: LibraryCardProps) {
-  const category = categoriesData.find((cat) => cat.id === library.categoryId)
-
   return (
     <Link href={`/libraries/${library.slug}`}>
       <Card className="hover:border-primary transition-colors cursor-pointer h-full">
@@ -25,7 +16,7 @@ export default function LibraryCard({ library }: LibraryCardProps) {
             <div className="flex-1">
               <CardTitle className="text-lg">{library.name}</CardTitle>
             </div>
-            {category && <Badge variant="secondary">{category.name}</Badge>}
+            {library.category && <Badge variant="secondary">{library.category.name}</Badge>}
           </div>
         </CardHeader>
         <CardContent>

@@ -1,11 +1,27 @@
 import { notFound } from "next/navigation"
-import { librariesData, categoriesData } from "@/lib/mock-data"
 import type { Metadata } from "next"
 import LibraryDetailClient from "./LibraryDetailClient"
 
+async function getLibrary(slug: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  try {
+    const res = await fetch(`${baseUrl}/api/libraries/${slug}`, {
+      cache: 'no-store',
+    })
+    if (!res.ok) {
+      return null
+    }
+    const data = await res.json()
+    return data.data
+  } catch (error) {
+    console.error('Error fetching library:', error)
+    return null
+  }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const library = librariesData.find((lib) => lib.slug === slug)
+  const library = await getLibrary(slug)
 
   if (!library) {
     return {
@@ -31,16 +47,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function LibraryDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const library = librariesData.find((lib) => lib.slug === slug)
+  const library = await getLibrary(slug)
 
   if (!library) {
     notFound()
   }
 
-  const category = categoriesData.find((cat) => cat.id === library.categoryId)
-  const alternatives = (library.alternatives
-    ?.map((altId) => librariesData.find((lib) => lib.id === altId))
-    .filter(Boolean)) || []
-
-  return <LibraryDetailClient library={library} category={category} alternatives={alternatives} slug={slug} />
+  return <LibraryDetailClient library={library} slug={slug} />
 }

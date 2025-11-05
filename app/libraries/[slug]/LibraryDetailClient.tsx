@@ -2,26 +2,25 @@
 
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { librariesData } from "@/lib/mock-data"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRight, Github, Package } from "lucide-react"
 import CodeBlock from "@/components/code-block"
-import type { Library, Category } from "@/lib/types"
+import type { Library } from "@/lib/types"
 
 interface LibraryDetailClientProps {
   library: Library
-  category?: Category
-  alternatives: (Library | undefined)[]
   slug: string
 }
 
-export default function LibraryDetailClient({ library, category, alternatives, slug }: LibraryDetailClientProps) {
+export default function LibraryDetailClient({ library, slug }: LibraryDetailClientProps) {
   if (!library) {
     notFound()
   }
+
+  const category = library.category
 
   return (
     <main className="min-h-screen bg-background">
@@ -77,11 +76,10 @@ export default function LibraryDetailClient({ library, category, alternatives, s
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="installation">Installation</TabsTrigger>
             <TabsTrigger value="example">Example</TabsTrigger>
-            <TabsTrigger value="alternatives">Alternatives</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -164,57 +162,23 @@ export default function LibraryDetailClient({ library, category, alternatives, s
               </Card>
             )}
           </TabsContent>
-
-          {/* Alternatives Tab */}
-          <TabsContent value="alternatives" className="space-y-6">
-            {alternatives && alternatives.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
-                <p className="text-muted-foreground">Consider these alternatives to {library.name}:</p>
-                {alternatives.map((alt) => (
-                  <Link key={alt?.id} href={`/libraries/${alt?.slug}`}>
-                    <Card className="hover:border-primary transition-colors cursor-pointer">
-                      <CardHeader>
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <CardTitle className="text-lg">{alt?.name}</CardTitle>
-                            <CardDescription>{alt?.description}</CardDescription>
-                          </div>
-                          <ArrowRight className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-1" />
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="pt-6">
-                  <p className="text-muted-foreground">No alternatives available for this library.</p>
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
         </Tabs>
 
         {/* Related Libraries */}
-        <div className="mt-16 pt-8 border-t border-border">
-          <h2 className="text-2xl font-bold text-foreground mb-6">More in {category?.name}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {librariesData
-              .filter((lib) => lib.categoryId === library.categoryId && lib.id !== library.id)
-              .slice(0, 4)
-              .map((lib) => (
-                <Link key={lib.id} href={`/libraries/${lib.slug}`}>
-                  <Card className="hover:border-primary transition-colors cursor-pointer h-full">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{lib.name}</CardTitle>
-                      <CardDescription>{lib.description}</CardDescription>
-                    </CardHeader>
-                  </Card>
-                </Link>
-              ))}
+        {category && (
+          <div className="mt-16 pt-8 border-t border-border">
+            <h2 className="text-2xl font-bold text-foreground mb-6">More in {category.name}</h2>
+            <p className="text-muted-foreground mb-4">
+              Browse the libraries page to discover more {category.name} packages.
+            </p>
+            <Link href={`/categories/${category.slug}`}>
+              <Button variant="outline">
+                View all {category.name} libraries
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
           </div>
-        </div>
+        )}
       </div>
     </main>
   )
