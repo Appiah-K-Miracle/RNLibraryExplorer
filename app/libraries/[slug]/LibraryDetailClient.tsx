@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRight, Github, Package } from "lucide-react"
 import CodeBlock from "@/components/code-block"
+import GitHubMetrics from "@/components/github-metrics"
 import type { Library } from "@/lib/types"
 
 interface LibraryDetailClientProps {
@@ -75,6 +76,11 @@ export default function LibraryDetailClient({ library, slug }: LibraryDetailClie
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        {/* GitHub Metrics Section */}
+        <div className="mb-8">
+          <GitHubMetrics library={library} variant="detailed" />
+        </div>
+
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
