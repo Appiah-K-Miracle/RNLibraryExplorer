@@ -251,10 +251,17 @@ If you get connection errors:
 
 ### Prisma Client Not Found
 
-If you get "Cannot find module '@prisma/client'":
+If you get "Cannot find module '@prisma/client'" or "Module '@prisma/client' has no exported member 'PrismaClient'":
 ```bash
 pnpm db:generate
 ```
+
+### Missing DATABASE_URL Environment Variable
+
+If you get "PrismaConfigEnvError: Missing required environment variable: DATABASE_URL":
+1. Ensure you have created a `.env` file in the root directory
+2. Add the DATABASE_URL variable to it (see step 2 above)
+3. The `prisma.config.ts` file will automatically load it using dotenv
 
 ### Migration Issues
 
