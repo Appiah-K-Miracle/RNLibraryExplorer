@@ -58,13 +58,15 @@ export async function fetchGitHubMetrics(githubUrl: string): Promise<GitHubMetri
 
   if (!token) {
     console.warn('GITHUB_TOKEN not configured. Using unauthenticated requests (lower rate limit).')
+  } else {
+    console.log(`Using GitHub token for ${owner}/${repo} (token starts with: ${token.substring(0, 7)}...)`)
   }
 
   try {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
+        ...(token && { 'Authorization': `token ${token}` })
       },
       next: { revalidate: 3600 } // Cache for 1 hour
     })

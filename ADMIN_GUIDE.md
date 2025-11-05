@@ -4,14 +4,24 @@
 
 ### 1. Configure GitHub Token
 
-Add your GitHub token to the `.env` file:
+Create a `.env` file in the project root (copy from `.env.example`):
+
+```bash
+cp .env.example .env
+```
+
+Then add your GitHub token to the `.env` file:
 
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/rnlibrary?schema=public"
-GITHUB_TOKEN="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"
+GITHUB_TOKEN="ghp_YourActualTokenHere"
 ```
 
-**Note:** Never commit your `.env` file to version control!
+**Important:**
+- Use a GitHub Personal Access Token (starts with `ghp_`)
+- Get your token from: https://github.com/settings/tokens
+- Required scopes: `public_repo` (or `repo` for private repos)
+- Never commit your `.env` file to version control!
 
 ### 2. Start the Application
 
@@ -259,6 +269,48 @@ Without authentication: 60 requests/hour
 With authentication: 5,000 requests/hour
 
 **Solution:** Add GITHUB_TOKEN to `.env` file
+
+### 401 Unauthorized Error from GitHub API
+
+**Symptoms:** Getting "401 Unauthorized" errors when syncing GitHub data
+
+**Common causes:**
+1. **Missing .env file**: Make sure you have a `.env` file (not `.env.example`) in the root directory
+2. **Token format**: GitHub token should start with `ghp_` for personal access tokens
+3. **Environment variable not loaded**: Restart your dev server after adding the token
+4. **Invalid token**: Token may have expired or been revoked
+
+**How to fix:**
+
+1. **Create/verify your `.env` file**:
+   ```bash
+   # In the project root, create .env if it doesn't exist
+   cp .env.example .env
+   ```
+
+2. **Add your GitHub token** (make sure it starts with `ghp_`):
+   ```env
+   GITHUB_TOKEN="ghp_YourActualTokenHere"
+   ```
+
+3. **Restart the development server**:
+   ```bash
+   # Stop the server (Ctrl+C)
+   # Then restart
+   npm run dev
+   ```
+
+4. **Verify token in GitHub**:
+   - Go to: https://github.com/settings/tokens
+   - Check if your token is still active
+   - Required scopes: `public_repo` (or `repo` for private repos)
+   - If expired, generate a new token
+
+5. **Check server logs**:
+   - Look for log message: "Using GitHub token for..."
+   - If you see "GITHUB_TOKEN not configured", the token isn't being loaded
+
+**Note:** Environment variables are only read when the server starts. Always restart after changing `.env`.
 
 ### Database Connection Issues
 Ensure PostgreSQL is running and DATABASE_URL is correct in `.env`
