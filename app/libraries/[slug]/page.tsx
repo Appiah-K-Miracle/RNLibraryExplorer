@@ -6,7 +6,7 @@ async function getLibrary(slug: string) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   try {
     const res = await fetch(`${baseUrl}/api/libraries/${slug}`, {
-      cache: 'no-store',
+      next: { revalidate: 300 }, // Revalidate every 5 minutes
     })
     if (!res.ok) {
       return null
