@@ -1,0 +1,67 @@
+// --------------------------------------------------
+// Prisma Schema for React Native Libraries Platform
+// --------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --------------------------------------------------
+// MODELS
+// --------------------------------------------------
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  libraries Library[]
+}
+
+model Library {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String
+
+  githubUrl   String
+  npmUrl      String
+
+  pros        String? 
+  cons        String? 
+  installNpm  String? 
+  installExpo String? 
+  codeExample String?
+
+  // ---- GitHub Metrics ----
+  githubStars       Int?      // Total ⭐ stars
+  githubForks       Int?      // Number of forks 🍴
+  githubWatchers    Int?      // Watchers count 👀
+  openIssues        Int?      // Good for health score
+  lastCommitDate    DateTime? // Determine outdated libs
+  issuesLast30Days  Int?      // Shows current stability
+
+  // ---- Popularity/Health Scoring ----
+  popularityScore   Int?      // AI-computed score
+  maintenanceScore  Int?      // Based on open issues & recency
+
+  // ---- Category Relationship ----
+  categoryId  String
+  category    Category  @relation(fields: [categoryId], references: [id])
+
+  lastUpdated DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Add future extensions here:
+// model User { ... }
+// model Review { ... }
+// model Favorite { ... }
