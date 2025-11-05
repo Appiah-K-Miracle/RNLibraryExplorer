@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: process.env.NEXT_PUBLIC_BASE_URL || "https://rn-libraries.example.com",
   },
-  generator: "v0.app",
+
 }
 
 export default function RootLayout({

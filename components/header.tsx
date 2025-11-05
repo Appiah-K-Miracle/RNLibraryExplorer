@@ -54,9 +54,7 @@ export default function Header() {
             <Link href="/about" className="block px-3 py-2 text-foreground hover:text-primary transition-colors">
               About
             </Link>
-            <Link href="/admin" className="block px-3 py-2 text-foreground hover:text-primary transition-colors">
-              Admin
-            </Link>
+            
           </div>
         )}
       </nav>
