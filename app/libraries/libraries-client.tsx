@@ -57,6 +57,12 @@ export default function LibrariesClientPage({ libraries, categories }: Libraries
           return dateA - dateB
         })
         break
+      case "stars":
+        results.sort((a, b) => (b.githubStars || 0) - (a.githubStars || 0))
+        break
+      case "popularity":
+        results.sort((a, b) => (b.popularityScore || 0) - (a.popularityScore || 0))
+        break
     }
 
     return results
@@ -120,6 +126,8 @@ export default function LibrariesClientPage({ libraries, categories }: Libraries
                   <SelectItem value="name">Name (A-Z)</SelectItem>
                   <SelectItem value="recent">Recently Updated</SelectItem>
                   <SelectItem value="oldest">Oldest Updated</SelectItem>
+                  <SelectItem value="stars">Most Stars</SelectItem>
+                  <SelectItem value="popularity">Most Popular</SelectItem>
                 </SelectContent>
               </Select>
             </div>
