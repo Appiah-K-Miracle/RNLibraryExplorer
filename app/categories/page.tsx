@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { categoriesData, librariesData } from "@/lib/mock-data"
 import { ArrowRight } from "lucide-react"
 
 export const metadata = {
@@ -8,7 +7,26 @@ export const metadata = {
   description: "Browse React Native libraries by category. Find the right tools for your project.",
 }
 
-export default function CategoriesPage() {
+async function getCategories() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  try {
+    const res = await fetch(`${baseUrl}/api/categories`, {
+      next: { revalidate: 600 }, // Revalidate every 10 minutes
+    })
+    if (!res.ok) {
+      throw new Error('Failed to fetch categories')
+    }
+    const data = await res.json()
+    return data.data || []
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+    return []
+  }
+}
+
+export default async function CategoriesPage() {
+  const categories = await getCategories()
+
   return (
     <main className="min-h-screen bg-background">
       {/* Header */}
@@ -22,8 +40,8 @@ export default function CategoriesPage() {
       {/* Categories Grid */}
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categoriesData.map((category) => {
-            const count = librariesData.filter((lib) => lib.categoryId === category.id).length
+          {categories.map((category: any) => {
+            const count = category._count?.libraries || 0
 
             return (
               <Link key={category.id} href={`/categories/${category.slug}`}>

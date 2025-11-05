@@ -1,7 +1,21 @@
-import { librariesData, categoriesData } from "@/lib/mock-data"
+import { prisma } from "@/lib/prisma"
 
-export default function sitemap() {
+export default async function sitemap() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://rn-libraries.example.com"
+
+  // Fetch libraries and categories from database
+  const libraries = await prisma.library.findMany({
+    select: {
+      slug: true,
+      lastUpdated: true,
+    },
+  })
+
+  const categories = await prisma.category.findMany({
+    select: {
+      slug: true,
+    },
+  })
 
   // Static routes
   const staticRoutes = [
@@ -32,7 +46,7 @@ export default function sitemap() {
   ]
 
   // Library detail routes
-  const libraryRoutes = librariesData.map((library) => ({
+  const libraryRoutes = libraries.map((library) => ({
     url: `${baseUrl}/libraries/${library.slug}`,
     lastModified: library.lastUpdated || new Date(),
     changeFrequency: "monthly" as const,
@@ -40,7 +54,7 @@ export default function sitemap() {
   }))
 
   // Category routes
-  const categoryRoutes = categoriesData.map((category) => ({
+  const categoryRoutes = categories.map((category) => ({
     url: `${baseUrl}/categories/${category.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

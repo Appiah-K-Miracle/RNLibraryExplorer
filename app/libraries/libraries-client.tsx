@@ -4,12 +4,17 @@ import { useState, useMemo } from "react"
 import { useSearchParams } from "next/navigation"
 import LibraryCard from "@/components/library-card"
 import SearchBar from "@/components/search-bar"
-import { librariesData, categoriesData } from "@/lib/mock-data"
+import type { Library, Category } from "@/lib/types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 
-export default function LibrariesClientPage() {
+interface LibrariesClientPageProps {
+  libraries: Library[]
+  categories: Category[]
+}
+
+export default function LibrariesClientPage({ libraries, categories }: LibrariesClientPageProps) {
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get("q") || ""
 
@@ -18,7 +23,7 @@ export default function LibrariesClientPage() {
   const [sortBy, setSortBy] = useState<string>("name")
 
   const filteredLibraries = useMemo(() => {
-    let results = librariesData
+    let results = libraries
 
     // Filter by search query
     if (searchQuery.trim()) {
@@ -55,7 +60,7 @@ export default function LibrariesClientPage() {
     }
 
     return results
-  }, [searchQuery, selectedCategory, sortBy])
+  }, [libraries, searchQuery, selectedCategory, sortBy])
 
   const hasActiveFilters = searchQuery.trim() || selectedCategory !== "all"
 
@@ -71,7 +76,7 @@ export default function LibrariesClientPage() {
         <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
           <h1 className="text-4xl font-bold text-foreground mb-2">React Native Libraries</h1>
           <p className="text-lg text-muted-foreground">
-            Browse {librariesData.length} carefully curated packages for React Native development
+            Browse {libraries.length} carefully curated packages for React Native development
           </p>
         </div>
       </div>
@@ -95,7 +100,7 @@ export default function LibrariesClientPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categoriesData.map((category) => (
+                  {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id}>
                       {category.name}
                     </SelectItem>
@@ -137,7 +142,7 @@ export default function LibrariesClientPage() {
         {filteredLibraries.length > 0 ? (
           <>
             <div className="mb-6 text-sm text-muted-foreground">
-              Showing {filteredLibraries.length} of {librariesData.length} libraries
+              Showing {filteredLibraries.length} of {libraries.length} libraries
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredLibraries.map((library) => (

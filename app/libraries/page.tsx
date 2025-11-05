@@ -6,6 +6,43 @@ export const metadata = {
     "Browse our complete collection of React Native libraries. Search and filter by category to find the perfect packages for your project.",
 }
 
-export default function LibrariesPage() {
-  return <LibrariesClientPage />
+async function getLibraries() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  try {
+    const res = await fetch(`${baseUrl}/api/libraries`, {
+      next: { revalidate: 300 }, // Revalidate every 5 minutes
+    })
+    if (!res.ok) {
+      throw new Error('Failed to fetch libraries')
+    }
+    const data = await res.json()
+    return data.data || []
+  } catch (error) {
+    console.error('Error fetching libraries:', error)
+    return []
+  }
+}
+
+async function getCategories() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  try {
+    const res = await fetch(`${baseUrl}/api/categories`, {
+      next: { revalidate: 600 }, // Revalidate every 10 minutes
+    })
+    if (!res.ok) {
+      throw new Error('Failed to fetch categories')
+    }
+    const data = await res.json()
+    return data.data || []
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+    return []
+  }
+}
+
+export default async function LibrariesPage() {
+  const libraries = await getLibraries()
+  const categories = await getCategories()
+
+  return <LibrariesClientPage libraries={libraries} categories={categories} />
 }
