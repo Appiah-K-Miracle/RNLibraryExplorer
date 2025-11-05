@@ -17,25 +17,25 @@ export interface Library {
   categoryId: string
   githubUrl: string
   npmUrl: string
-  pros?: string | null
-  cons?: string | null
-  installNpm?: string | null
-  installExpo?: string | null
-  codeExample?: string | null
+  pros?: string
+  cons?: string
+  installNpm?: string
+  installExpo?: string
+  codeExample?: string
   
   // GitHub Metrics
-  githubStars?: number | null
-  githubForks?: number | null
-  githubWatchers?: number | null
-  openIssues?: number | null
-  lastCommitDate?: Date | string | null
-  issuesLast30Days?: number | null
+  githubStars?: number
+  githubForks?: number
+  githubWatchers?: number
+  openIssues?: number
+  lastCommitDate?: Date | string
+  issuesLast30Days?: number
   
   // Popularity/Health Scoring
-  popularityScore?: number | null
-  maintenanceScore?: number | null
+  popularityScore?: number
+  maintenanceScore?: number
   
-  lastUpdated?: Date | string | null
+  lastUpdated?: Date | string
   createdAt?: Date | string
   updatedAt?: Date | string
   

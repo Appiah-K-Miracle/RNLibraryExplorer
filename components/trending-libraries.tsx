@@ -4,7 +4,7 @@ async function getLibraries() {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   try {
     const res = await fetch(`${baseUrl}/api/libraries`, {
-      cache: 'no-store',
+      next: { revalidate: 300 }, // Revalidate every 5 minutes
     })
     if (!res.ok) {
       throw new Error('Failed to fetch libraries')
