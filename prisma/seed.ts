@@ -198,11 +198,13 @@ async function seed() {
       where: { name: lib.category },
     });
 
+    const { category: _, ...libData } = lib;
+
     await prisma.library.upsert({
       where: { slug: slugify(lib.name, { lower: true }) },
       update: {},
       create: {
-        ...lib,
+        ...libData,
         slug: slugify(lib.name, { lower: true }),
         categoryId: category!.id,
         githubStars: Math.floor(Math.random() * 50000),
