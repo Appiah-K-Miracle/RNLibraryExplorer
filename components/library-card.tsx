@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import GitHubMetrics from "@/components/github-metrics"
 import type { Library } from "@/lib/types"
 
 interface LibraryCardProps {
@@ -19,10 +20,11 @@ export default function LibraryCard({ library }: LibraryCardProps) {
             {library.category && <Badge variant="secondary">{library.category.name}</Badge>}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
           <p className="text-sm text-muted-foreground line-clamp-2">{library.description}</p>
+          <GitHubMetrics library={library} variant="compact" />
           {library.lastUpdated && (
-            <p className="text-xs text-muted-foreground mt-4">
+            <p className="text-xs text-muted-foreground">
               Updated {new Date(library.lastUpdated).toLocaleDateString()}
             </p>
           )}
