@@ -1,13 +1,46 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { categoriesData, librariesData } from "@/lib/mock-data"
 import LibraryCard from "@/components/library-card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 
+async function getCategory(slug: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  try {
+    const res = await fetch(`${baseUrl}/api/categories/${slug}`, {
+      cache: 'no-store',
+    })
+    if (!res.ok) {
+      return null
+    }
+    const data = await res.json()
+    return data.data
+  } catch (error) {
+    console.error('Error fetching category:', error)
+    return null
+  }
+}
+
+async function getAllCategories() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+  try {
+    const res = await fetch(`${baseUrl}/api/categories`, {
+      cache: 'no-store',
+    })
+    if (!res.ok) {
+      return []
+    }
+    const data = await res.json()
+    return data.data || []
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+    return []
+  }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const category = categoriesData.find((cat) => cat.slug === slug)
+  const category = await getCategory(slug)
 
   if (!category) {
     return {
@@ -16,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     }
   }
 
-  const count = librariesData.filter((lib) => lib.categoryId === category.id).length
+  const count = category.libraries?.length || 0
 
   return {
     title: `${category.name} Libraries | React Native Libraries Showcase`,
@@ -31,13 +64,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const category = categoriesData.find((cat) => cat.slug === slug)
+  const category = await getCategory(slug)
+  const allCategories = await getAllCategories()
 
   if (!category) {
     notFound()
   }
 
-  const libraries = librariesData.filter((lib) => lib.categoryId === category.id)
+  const libraries = category.libraries || []
 
   return (
     <main className="min-h-screen bg-background">
@@ -61,9 +95,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
           {/* Quick Navigation to Other Categories */}
           <div className="flex flex-wrap gap-2">
-            {categoriesData
-              .filter((cat) => cat.id !== category.id)
-              .map((cat) => (
+            {allCategories
+              .filter((cat: any) => cat.id !== category.id)
+              .map((cat: any) => (
                 <Link key={cat.id} href={`/categories/${cat.slug}`}>
                   <Button variant="outline" size="sm">
                     {cat.name}
@@ -78,7 +112,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         {libraries.length > 0 ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {libraries.map((library) => (
+            {libraries.map((library: any) => (
               <LibraryCard key={library.id} library={library} />
             ))}
           </div>
