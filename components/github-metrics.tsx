@@ -10,7 +10,7 @@ interface GitHubMetricsProps {
 
 export default function GitHubMetrics({ library, variant = "compact" }: GitHubMetricsProps) {
   const formatNumber = (num?: number) => {
-    if (!num) return "0"
+    if (num == null) return "0"
     if (num >= 1000) {
       return `${(num / 1000).toFixed(1)}k`
     }
@@ -57,7 +57,7 @@ export default function GitHubMetrics({ library, variant = "compact" }: GitHubMe
     )
   }
 
-  // Detailed variant for library detail page
+  // Detailed variant for library detail page.
   return (
     <Card>
       <CardContent className="pt-6">
